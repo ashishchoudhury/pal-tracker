@@ -7,7 +7,6 @@ buildscript {
     }
 }
 
-
 plugins {
     id 'org.springframework.boot' version '2.2.2.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
@@ -22,8 +21,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation 'mysql:mysql-connector-java'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'mysql:mysql-connector-java'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
@@ -38,9 +37,7 @@ bootRun.environment([
         "WELCOME_MESSAGE": "hello",
         "SPRING_DATASOURCE_URL": developmentDbUrl,
         "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "*",
-        "MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS": "always",
-
-
+        "MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS": "always"
 ])
 
 def testDbUrl = "jdbc:mysql://localhost:3306/tracker_test?user=tracker&useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false"
@@ -48,21 +45,20 @@ test.environment([
         "WELCOME_MESSAGE": "Hello from test",
         "SPRING_DATASOURCE_URL": testDbUrl,
         "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "*",
-        "MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS": "always",
-
-
+        "MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS": "always"
 ])
+
+flyway {
+    url = developmentDbUrl
+    user = "tracker"
+    password = ""
+    locations = ["filesystem:databases/tracker/migrations"]
+}
+
+task testMigrate(type: FlywayMigrateTask) {
+    url = testDbUrl
+}
+
 springBoot {
     buildInfo()
-
 }
-    flyway {
-        url = developmentDbUrl
-        user = "tracker"
-        password = ""
-        locations = ["filesystem:databases/tracker/migrations"]
-    }
-
-    task testMigrate(type: FlywayMigrateTask) {
-        url = testDbUrl
-    }
