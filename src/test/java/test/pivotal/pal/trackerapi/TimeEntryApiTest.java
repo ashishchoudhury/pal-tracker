@@ -124,6 +124,7 @@ public class TimeEntryApiTest {
 
         ResponseEntity<String> deleteResponse = restTemplate.exchange("/time-entries/" + id, HttpMethod.DELETE, null, String.class);
 
+
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
         ResponseEntity<String> deletedReadResponse = this.restTemplate.getForEntity("/time-entries/" + id, String.class);
@@ -132,8 +133,11 @@ public class TimeEntryApiTest {
 
     private Long createTimeEntry() {
         HttpEntity<TimeEntry> entity = new HttpEntity<>(timeEntry);
+
         ResponseEntity<TimeEntry> response = restTemplate.exchange("/time-entries", HttpMethod.POST, entity, TimeEntry.class);
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
         return response.getBody().getId();
     }
 }
